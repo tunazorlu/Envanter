@@ -1,13 +1,8 @@
-﻿using Envanter.Shared.Entities.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Envanter.Shared.Entities;
 
-namespace Envanter.Shared.Entities
+namespace Envanter.Shared.DTOs
 {
-    public class Inventory : BaseEntity
+    public class InventoryDTO : Common.BaseEntityDTO
     {
         public string? Location { get; set; }
         public string? SeriNo { get; set; }

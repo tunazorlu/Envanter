@@ -6,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Envanter.Shared.Entities
+namespace Envanter.Shared.DTOs
 {
-    public class WareData : BaseEntity
+    public class WareDataDTO : Common.BaseEntityDTO
     {
         [Display(Name = "Ad")]
         public string Name { get; set; }
@@ -25,6 +25,6 @@ namespace Envanter.Shared.Entities
         [Display(Name = "Açıklama")]
         public string? Description { get; set; }
         public Guid? PersonalId { get; set; }
-        public virtual Personal? Personals { get; set; }
+        public virtual PersonalDTO? Personals { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Envanter.Shared.Entities.Common;
+using Envanter.Shared.Entities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -6,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Envanter.Shared.Entities
+namespace Envanter.Shared.DTOs
 {
-    public class Personal : BaseEntity
+    public class PersonalDTO : Common.BaseEntityDTO
     {
         [Display(Name = "Ad")]
         public string FirstName { get; set; }
@@ -36,7 +37,7 @@ namespace Envanter.Shared.Entities
         public string? WorkPhone { get; set; }
         [Display(Name = "Firma")]
         public string? Firm { get; set; }
-        public virtual List<Inventory>? Inventories { get; set; } = new List<Inventory>();
-        public virtual List<WareData>? WareDatas { get; set; } = new List<WareData>();
+        public virtual List<InventoryDTO>? Inventories { get; set; } = new List<InventoryDTO>();
+        public virtual List<WareDataDTO>? WareDatas { get; set; } = new List<WareDataDTO>();
     }
 }

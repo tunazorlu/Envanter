@@ -1,17 +1,22 @@
-using Syncfusion.Blazor;
+using Envanter.Server;
+using Microsoft.AspNetCore.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Mjk4MTUzNkAzMjMzMmUzMDJlMzBtNGRzeUJvREtWU2kzZEhvMGxqZHJmSk13bzNPRGR2b1I3S0VDM0FFS1I0PQ==");
-builder.Services.AddSyncfusionBlazor();
+// ConfigurationBuilder oluþturuyor ve appsettings.json dosyasý ile bazý giriþ bilgilerini yüklüyorum.
+var configuration = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .Build();
+
+// Startup sýnýfýný kullanarak konfigürasyonlarý düzenliyorum.
+var startup = new Startup(configuration);
+startup.ConfigureServices(builder.Services);
 
 // Add services to the container.
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
 
 var app = builder.Build();
 
@@ -19,8 +24,12 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseWebAssemblyDebugging();
-    app.UseSwagger();
-    app.UseSwaggerUI();
+}
+else
+{
+    app.UseExceptionHandler("/Error");
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
 }
 
 app.UseHttpsRedirection();
@@ -28,7 +37,6 @@ app.UseHttpsRedirection();
 app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
-app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapControllers();

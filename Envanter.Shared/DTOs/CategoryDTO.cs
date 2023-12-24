@@ -1,9 +1,8 @@
-﻿using Envanter.Shared.Entities.Common;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using Envanter.Shared.Entities;
 
-namespace Envanter.Shared.Entities
+namespace Envanter.Shared.DTOs
 {
-    public class Category : BaseEntity
+    public class CategoryDTO : Common.BaseEntityDTO
     {
         public string Type { get; set; }
         public string Brand { get; set; }
