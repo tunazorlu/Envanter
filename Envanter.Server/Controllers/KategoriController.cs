@@ -2,6 +2,7 @@
 using Envanter.Shared.DTOs;
 using Envanter.Shared.Entities;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace Envanter.Server.Controllers
 {
@@ -33,6 +34,90 @@ namespace Envanter.Server.Controllers
                 Inventories = c.Inventories,
             }).ToList();
 
+        }
+
+        [HttpGet("{id}")]
+        public IActionResult GetKategoriById(Guid id)
+        {
+            var kategori = _context.Categories.Find(id);
+            if (kategori == null)
+            {
+                return NotFound();
+            }
+
+            var kategoriDTO = new CategoryDTO
+            {
+                Id = kategori.Id,
+                CreatedDate = kategori.CreatedDate,
+                UpdatedDate = kategori.UpdatedDate,
+                Type = kategori.Type,
+                Brand = kategori.Brand,
+                Model = kategori.Model,
+                Inventories = kategori.Inventories,
+            };
+
+            return Ok(kategoriDTO);
+        }
+
+        [HttpPost]
+        public IActionResult PostKategori([FromBody] CategoryDTO kategoriDTO)
+        {
+            if (kategoriDTO == null)
+            {
+                return BadRequest();
+            }
+
+            var kategori = new Category
+            {
+                Id = kategoriDTO.Id,
+                CreatedDate = kategoriDTO.CreatedDate,
+                UpdatedDate = kategoriDTO.UpdatedDate,
+                Type = kategoriDTO.Type,
+                Brand = kategoriDTO.Brand,
+                Model = kategoriDTO.Model,
+                Inventories = kategoriDTO.Inventories,
+            };
+
+            _context.Categories.Add(kategori);
+            _context.SaveChanges();
+            return CreatedAtAction(nameof(GetKategoriById), new { id = kategori.Id }, kategoriDTO);
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult PutKategori(Guid id, [FromBody] CategoryDTO kategoriDTO)
+        {
+            if (kategoriDTO == null || kategoriDTO.Id != id)
+            {
+                return BadRequest();
+            }
+            var updatedKategori = _context.Categories.Find(id);
+            if (updatedKategori == null)
+            {
+                return NotFound();
+            }
+            updatedKategori.Type = kategoriDTO.Type;
+            updatedKategori.Brand = kategoriDTO.Brand;
+            updatedKategori.Model = kategoriDTO.Model;
+            updatedKategori.Inventories = kategoriDTO.Inventories;
+            updatedKategori.UpdatedDate = DateTime.Now;
+            _context.Categories.Update(updatedKategori);
+            _context.SaveChanges();
+            return NoContent();
+        }
+        [HttpDelete("{id}")]
+        public IActionResult DeleteKategori(Guid id)
+        {
+            var kategori = _context.Categories.Find(id);
+
+            if (kategori == null)
+            {
+                return NotFound();
+            }
+
+            _context.Categories.Remove(kategori);
+            _context.SaveChanges();
+
+            return NoContent();
         }
     }
 }
