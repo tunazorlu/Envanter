@@ -7,13 +7,11 @@ using System.Globalization;
 
 namespace Envanter.Server
 {
-    public class Startup
+    public class Startup(IConfiguration configuration)
     {
         public IConfiguration Configuration { get; }
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
+
+        private readonly IConfiguration _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         public void ConfigureServices(IServiceCollection services)
         {
             //services.AddLocalization(options => options.ResourcesPath = "Shared.Resources");

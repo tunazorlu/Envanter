@@ -1,0 +1,52 @@
+﻿@using Envanter.Shared.DTOs
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@inject HttpClient Http;
+<table>
+    <thead>
+        <tr>
+            <td>
+            </td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var kategori in kategoriDtoList)
+        {
+            <tr>
+                <td>@kategori?.Type</td>
+                <td>@kategori?.Brand</td>
+                <td>@kategori?.Model</td>
+            </tr>
+        </tbody>
+    </table>
+
+
+
+
+
+            @code {
+    private List<CategoryDTO> kategoriDtoList = new List<CategoryDTO>();
+            protected override async Task OnInitializedAsync()
+            {
+                kategoriDtoList = new List<CategoryDTO>();
+                try
+                {
+                    var kategoriler = await Http.GetStringAsync("api/Kategori");
+                    var options = new JsonSerializerOptions
+                {
+                    ReferenceHandler = ReferenceHandler.Preserve,
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                    PropertyNameCaseInsensitive = true
+                };
+                    kategoriDtoList = JsonSerializer.Deserialize<List<CategoryDTO>>(kategoriler, options);
+
+                    // Verileri Teslim Tarihi sütununa göre sırala
+                    kategoriDtoList = kategoriDtoList.OrderBy(item => item.Type).ToList();
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("An error occurred: " + ex.Message);
+                }
+
+            }
+}

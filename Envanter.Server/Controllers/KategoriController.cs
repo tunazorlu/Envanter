@@ -1,39 +1,24 @@
 ﻿using Envanter.Server.Data;
+using Envanter.Server.Service;
 using Envanter.Shared.DTOs;
-using Envanter.Shared.Entities;
 using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace Envanter.Server.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     //C# 12.0 first constructor kullanımı
-    public class KategoriController(EnvanterDbContext context) : Controller
+    public class KategoriController(EnvanterDbContext context, KategoriDtoConverter kategoriDtoConverter) : ControllerBase
     {
         private readonly EnvanterDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
+        private readonly KategoriDtoConverter _kategoriDtoConverter = kategoriDtoConverter ?? throw new ArgumentNullException(nameof(kategoriDtoConverter));
 
         [HttpGet]
         public IActionResult GetKategoriAsJson()
         {
             var kategoriler = _context.Categories.ToList();
-            var kategoriDTOs = MapToCategoryDTOs(kategoriler);
+            var kategoriDTOs = kategoriler.Select(_kategoriDtoConverter.MapToCategoryDTO).ToList();
             return Ok(kategoriDTOs);
-        }
-        private List<CategoryDTO> MapToCategoryDTOs(IEnumerable<Category> categories)
-        {
-            // Category sınıfından CategoryDTO'ya dönüştürme işlemini gerçekleştirin.
-            // Örnek bir dönüşüm kodu:
-            return categories.Select(c => new CategoryDTO { 
-                Id = c.Id,
-                CreatedDate = c.CreatedDate,
-                UpdatedDate = c.UpdatedDate,
-                Type = c.Type, 
-                Brand = c.Brand,
-                Model = c.Model,
-                Inventories = c.Inventories,
-            }).ToList();
-
         }
 
         [HttpGet("{id}")]
@@ -45,16 +30,7 @@ namespace Envanter.Server.Controllers
                 return NotFound();
             }
 
-            var kategoriDTO = new CategoryDTO
-            {
-                Id = kategori.Id,
-                CreatedDate = kategori.CreatedDate,
-                UpdatedDate = kategori.UpdatedDate,
-                Type = kategori.Type,
-                Brand = kategori.Brand,
-                Model = kategori.Model,
-                Inventories = kategori.Inventories,
-            };
+            var kategoriDTO = _kategoriDtoConverter.MapToCategoryDTO(kategori);
 
             return Ok(kategoriDTO);
         }
@@ -67,16 +43,7 @@ namespace Envanter.Server.Controllers
                 return BadRequest();
             }
 
-            var kategori = new Category
-            {
-                Id = kategoriDTO.Id,
-                CreatedDate = kategoriDTO.CreatedDate,
-                UpdatedDate = kategoriDTO.UpdatedDate,
-                Type = kategoriDTO.Type,
-                Brand = kategoriDTO.Brand,
-                Model = kategoriDTO.Model,
-                Inventories = kategoriDTO.Inventories,
-            };
+            var kategori = _kategoriDtoConverter.MapToCategory(kategoriDTO);
 
             _context.Categories.Add(kategori);
             _context.SaveChanges();
@@ -90,20 +57,16 @@ namespace Envanter.Server.Controllers
             {
                 return BadRequest();
             }
-            var updatedKategori = _context.Categories.Find(id);
-            if (updatedKategori == null)
-            {
-                return NotFound();
-            }
-            updatedKategori.Type = kategoriDTO.Type;
-            updatedKategori.Brand = kategoriDTO.Brand;
-            updatedKategori.Model = kategoriDTO.Model;
-            updatedKategori.Inventories = kategoriDTO.Inventories;
+
+            var updatedKategori = _kategoriDtoConverter.MapToCategory(kategoriDTO);
             updatedKategori.UpdatedDate = DateTime.Now;
+
             _context.Categories.Update(updatedKategori);
             _context.SaveChanges();
+
             return NoContent();
         }
+
         [HttpDelete("{id}")]
         public IActionResult DeleteKategori(Guid id)
         {
