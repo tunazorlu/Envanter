@@ -14,15 +14,9 @@ namespace Envanter.Server
         private readonly IConfiguration _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddLocalization(options => options.ResourcesPath = "Shared.Resources");
             //services.AddScoped<MahkemeDosyasiService>();
             var connectionString = Configuration.GetConnectionString("SQLDbConnection");
             services.AddDbContext<EnvanterDbContext>(options => options.UseSqlServer(connectionString));
-
-            /* MYSQL kullanırsak connector için .Net 8.0 uyumlu Pomelo.EntityFrameworkCore.MySql yüklemelisin ve değişkenler aşağıdaki gibi olmalı
-             var connectionString = Configuration.GetConnectionString("MYSQLDbConnection");
-             services.AddDbContext<RaporDataContext>(options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-            */
 
             services.AddControllers().AddJsonOptions(options =>
             {
